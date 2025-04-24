@@ -16,8 +16,9 @@ from local_code.stage_2_code.Evaluate_F1Score import Evaluate_F1Score
 
 class Setting(setting):
     def load_run_save_evaluate(self):
-        # pick MPS on Mac, else CPU
-        device = torch.device("cpu")
+        # Windows:
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # Mac:
         #device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
         # -- load train split --
