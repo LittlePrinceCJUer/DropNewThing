@@ -13,7 +13,7 @@ from torch import nn
 
 class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
-    max_epoch = 200
+    max_epoch = 300
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 1e-3
     log_interval = 10
