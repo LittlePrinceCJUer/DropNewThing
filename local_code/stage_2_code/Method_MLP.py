@@ -13,7 +13,7 @@ from torch import nn
 
 class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
-    max_epoch = 300
+    max_epoch = 500
     # it defines the learning rate for gradient descent based optimizer for model learning
     learning_rate = 1e-3
     log_interval = 10
@@ -32,6 +32,9 @@ class Method_MLP(method, nn.Module):
         self.activation_func_2 = nn.ReLU()
         # layer 3
         self.fc_layer_3 = nn.Linear(128, 10)
+        #self.activation_func_3 = nn.ReLU()
+        # layer 4
+        #self.fc_layer_4 = nn.Linear(64, 10)
         # check here for nn.Softmax doc: https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         self.activation_func_3 = nn.Softmax(dim=1)  # don't use it if using CrossEntropyLoss, it involves that
 
@@ -47,6 +50,7 @@ class Method_MLP(method, nn.Module):
         # hidden layer embeddings
         h_1 = self.activation_func_1(self.fc_layer_1(x))
         h_2 = self.activation_func_2(self.fc_layer_2(h_1))
+        #h_3 = self.activation_func_3(self.fc_layer_3(h_2))
         # outout layer result
         logits = self.fc_layer_3(h_2)
         return logits
@@ -59,6 +63,7 @@ class Method_MLP(method, nn.Module):
         optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
         # check here for the nn.CrossEntropyLoss doc: https://pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html
         loss_function = nn.CrossEntropyLoss()
+        #loss_function = nn.MSELoss()
         # for training accuracy investigation purpose
         accuracy_evaluator = Evaluate_Accuracy('train-acc', '')
 
