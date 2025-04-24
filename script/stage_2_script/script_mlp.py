@@ -1,4 +1,5 @@
 import os, sys
+import matplotlib.pyplot as plt
 
 # 1) locate this script’s folder
 file_path = os.path.abspath(__file__)
@@ -46,4 +47,29 @@ if 1:
     # ------------------------------------------------------
     
 
-    
+    # # ---- compare training-loss for different learning rates ----
+    # lrs = [1e-1, 1e-2, 1e-3, 1e-4, 1e-5]
+    # plt.figure(figsize=(10, 8))
+
+    # for lr in lrs:
+    #     # instantiate a fresh model for each lr
+    #     method_i = Method_MLP('MLP', '2-layer MLP', lr)
+    #     setting_i = Setting('MLP_lr_compare', '')
+    #     setting_i.prepare(data_obj, method_i, result_obj, None)
+
+    #     # this will load data, train the model, save predictions, and plot losses internally
+    #     _ = setting_i.load_run_save_evaluate()
+
+    #     # extract and plot training loss curve
+    #     epochs = list(range(len(method_i.train_losses)))
+    #     plt.plot(epochs,
+    #              method_i.train_losses,
+    #              label=f'lr={lr:.0e}')
+
+    # # finalize the comparison plot
+    # plt.xlabel('Epoch')
+    # plt.ylabel('Training Loss')
+    # plt.title('Training Loss vs. Epoch for Different Learning Rates')
+    # plt.legend()
+    # plt.grid(False)
+    # plt.show()

@@ -14,14 +14,13 @@ from torch import nn
 class Method_MLP(method, nn.Module):
     # it defines the max rounds to train the model
     max_epoch = 500
-    # it defines the learning rate for gradient descent based optimizer for model learning
-    learning_rate = 1e-3
+    # it defines the default learning rate for gradient descent based optimizer for model learning
     log_interval = 10
 
     # it defines the the MLP model architecture, e.g.,
     # how many layers, size of variables in each layer, activation function, etc.
     # the size of the input/output portal of the model architecture should be consistent with our data input and desired output
-    def __init__(self, mName, mDescription):
+    def __init__(self, mName, mDescription, lr=1e-3):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # check here for nn.Linear doc: https://pytorch.org/docs/stable/generated/torch.nn.Linear.html
@@ -41,6 +40,7 @@ class Method_MLP(method, nn.Module):
         # to record loss curves
         self.train_losses = []
         self.test_losses = []
+        self.learning_rate = lr
 
     # it defines the forward propagation function for input x
     # this function will calculate the output layer by layer
