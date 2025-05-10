@@ -5,7 +5,7 @@ from torch.utils.data import TensorDataset, DataLoader
 from local_code.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
 
 class Method_ORL_CNN(method, nn.Module):
-    def __init__(self, mName, mDescription, max_epoch=20, learning_rate=1e-3, batch_size=64):
+    def __init__(self, mName, mDescription, max_epoch=20, learning_rate=1e-3, batch_size=16):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # architecture
