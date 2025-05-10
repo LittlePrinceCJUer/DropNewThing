@@ -59,8 +59,7 @@ class Method_MNIST_CNN(method, nn.Module):
 
             if epoch % 10 == 0:
                 # evaluate on the training set
-                with torch.no_grad():
-                    preds = self.forward(X_train).argmax(dim=1)
+                preds = self.forward(X_train).argmax(dim=1)
                 acc_eval.data = {'true_y': y_train, 'pred_y': preds}
                 print(f'[MNIST] Epoch {epoch:3d}  Loss {epoch_loss:.4f}  Acc {acc_eval.evaluate():.4f}')
 

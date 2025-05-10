@@ -5,29 +5,21 @@ from torch.utils.data import TensorDataset, DataLoader
 from local_code.stage_3_code.Evaluate_Accuracy import Evaluate_Accuracy
 
 class Method_ORL_CNN(method, nn.Module):
-    def __init__(self, mName, mDescription, max_epoch=60, learning_rate=1e-3, batch_size=64):
+    def __init__(self, mName, mDescription, max_epoch=20, learning_rate=1e-3, batch_size=64):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
         # architecture
         self.block1 = nn.Sequential(
-            nn.Conv2d(1, 3, 3, 1, 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.Conv2d(1, 3, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
         )
         self.block2 = nn.Sequential(
-            nn.Conv2d(3, 32, 3, 1, 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.Conv2d(3, 32, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
         )
         self.block3 = nn.Sequential(
-            nn.Conv2d(32, 64, 3, 1, 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.Conv2d(32, 64, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
         )
         self.block4 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, 1, 1),
-            nn.ReLU(),
-            nn.MaxPool2d(2)
+            nn.Conv2d(64, 128, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
         )
         self.fc1 = nn.Linear(128 * 7 * 5, 128)
         self.fc2 = nn.Linear(128, 40)
@@ -38,7 +30,6 @@ class Method_ORL_CNN(method, nn.Module):
         self.batch_size = batch_size
 
         self.train_losses = []
-        #self.test_losses  = []
 
     def forward(self, x):
         x = self.block1(x); x = self.block2(x)
@@ -48,8 +39,17 @@ class Method_ORL_CNN(method, nn.Module):
         return self.fc2(x)
 
     def train(self, X_train, y_train, X_test=None, y_test=None):
-        train_ds     = TensorDataset(X_train, y_train)
-        train_loader = DataLoader(train_ds, batch_size=self.batch_size, shuffle=True)
+        device = X_train.device
+        # DataLoader on CPU
+        X_cpu, y_cpu = X_train.cpu(), y_train.cpu()
+        train_ds     = TensorDataset(X_cpu, y_cpu)
+        train_loader = DataLoader(
+            train_ds,
+            batch_size=self.batch_size,
+            shuffle=True,
+            num_workers=4,
+            pin_memory=True
+        )
 
         optimizer = torch.optim.Adam(self.parameters(), lr=self.lr)
         loss_fn   = nn.CrossEntropyLoss()
@@ -57,30 +57,43 @@ class Method_ORL_CNN(method, nn.Module):
 
         for epoch in range(self.max_epoch):
             running_loss = 0.0
-            for X_b, y_b in train_loader:
-                logits = self.forward(X_b)
-                loss   = loss_fn(logits, y_b)
+            for Xb_cpu, yb_cpu in train_loader:
+                Xb = Xb_cpu.to(device, non_blocking=True)
+                yb = yb_cpu.to(device, non_blocking=True)
+                logits = self.forward(Xb)
+                loss   = loss_fn(logits, yb)
                 optimizer.zero_grad()
                 loss.backward()
                 optimizer.step()
-                running_loss += loss.item() * X_b.size(0)
+                running_loss += loss.item() * Xb.size(0)
 
             epoch_loss = running_loss / len(X_train)
             self.train_losses.append(epoch_loss)
 
-            if epoch % 10 == 0:
-                preds = self.forward(X_train).argmax(dim=1)
-                acc_eval.data = {'true_y': y_train, 'pred_y': preds}
-                print(f'[ORL] Epoch {epoch:3d}  Loss {epoch_loss:.4f}  Acc {acc_eval.evaluate():.4f}')
+            if epoch % 5 == 0:
+                total_loss, correct, total = 0.0, 0, 0
+                with torch.no_grad():
+                    for Xb_cpu, yb_cpu in train_loader:
+                        Xb = Xb_cpu.to(device, non_blocking=True)
+                        yb = yb_cpu.to(device, non_blocking=True)
+                        out = self.forward(Xb)
+                        total_loss += loss_fn(out, yb).item() * Xb.size(0)
+                        preds = out.argmax(dim=1)
+                        correct += preds.eq(yb).sum().item()
+                        total += yb.size(0)
+                    train_acc = correct / total
+                    train_loss = total_loss / total
+                print(f'[ORL] Epoch {epoch:3d}  Loss {train_loss:.4f}  Acc {train_acc:.4f}')
 
     def test(self, X):
+        device = X.device
         with torch.no_grad():
             return self.forward(X).argmax(dim=1)
 
     def run(self):
         tr, te = self.data['train'], self.data['test']
         print('>> ORL_CNN training...')
-        self.train(tr['X'], tr['y'], te['X'], te['y'])
+        self.train(tr['X'], tr['y'])
         print('>> ORL_CNN testing...')
         pred = self.test(te['X'])
         return {'pred_y': pred, 'true_y': te['y']}
