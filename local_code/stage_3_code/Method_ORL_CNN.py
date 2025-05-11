@@ -21,7 +21,12 @@ class Method_ORL_CNN(method, nn.Module):
         self.block4 = nn.Sequential(
             nn.Conv2d(64, 128, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
         )
-        self.fc1 = nn.Linear(128 * 7 * 5, 128)
+        self.block5 = nn.Sequential(
+            nn.Conv2d(128, 256, 3, 1, 1), nn.ReLU(), nn.MaxPool2d(2)
+        )
+        #self.fc1 = nn.Linear(128 * 7 * 5, 128) # original
+        #self.fc1 = nn.Linear(256 * 3 * 2, 128)  # add 1 layer
+        self.fc1 = nn.Linear(64 * 14 * 11, 128)   # delete 1 layer
         self.fc2 = nn.Linear(128, 40)
 
         # training hyperparams
@@ -33,7 +38,8 @@ class Method_ORL_CNN(method, nn.Module):
 
     def forward(self, x):
         x = self.block1(x); x = self.block2(x)
-        x = self.block3(x); x = self.block4(x)
+        x = self.block3(x)#; x = self.block4(x)
+        #x = self.block5(x)
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         return self.fc2(x)

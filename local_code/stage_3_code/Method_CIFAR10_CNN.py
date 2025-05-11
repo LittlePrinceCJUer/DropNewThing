@@ -21,7 +21,12 @@ class Method_CIFAR10_CNN(method, nn.Module):
         self.block4 = nn.Sequential(
             nn.Conv2d(128, 256, 3, 1, 1), nn.BatchNorm2d(256), nn.ReLU(), nn.MaxPool2d(2)
         )
-        self.fc1 = nn.Linear(256 * 2 * 2, 128)
+        self.block5 = nn.Sequential(
+            nn.Conv2d(256, 512, 3, 1, 1), nn.BatchNorm2d(512), nn.ReLU(), nn.MaxPool2d(2)
+        )
+        #self.fc1 = nn.Linear(256 * 2 * 2, 128) # original
+        #self.fc1 = nn.Linear(512, 128)  # add 1 layer
+        self.fc1 = nn.Linear(128 * 4 * 4, 128)   # delete 1 layer
         self.fc2 = nn.Linear(128, 10)
 
         # training hyperparams
@@ -34,7 +39,8 @@ class Method_CIFAR10_CNN(method, nn.Module):
     
     def forward(self, x):
         x = self.block1(x); x = self.block2(x)
-        x = self.block3(x); x = self.block4(x)
+        x = self.block3(x)#; x = self.block4(x)
+        #x = self.block5(x)
         x = torch.flatten(x, 1)
         x = F.relu(self.fc1(x))
         return self.fc2(x)

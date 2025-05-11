@@ -28,9 +28,9 @@ if __name__ == '__main__':
 
     # define the experiments: (dataset_name, MethodClass, epochs)
     experiments = [
-        #('MNIST', Method_MNIST_CNN,   60,  1e-4),
-        #('CIFAR', Method_CIFAR10_CNN,  20, 1e-3),
-        ('ORL',   Method_ORL_CNN,     20, 1e-3),
+        #('MNIST', Method_MNIST_CNN,   30,  1e-3),
+        #('CIFAR', Method_CIFAR10_CNN,  30, 1e-3),
+        ('ORL',   Method_ORL_CNN,     30, 1e-3),
     ]
 
     for name, MethodClass, epochs, ler in experiments:
