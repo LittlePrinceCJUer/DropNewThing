@@ -8,21 +8,42 @@ class Method_TextRNN(method, nn.Module):
     def __init__(self, mName, mDescription,
                  emb_dim=100, hidden_size=128, num_layers=2,
                  max_epoch=10, learning_rate=1e-3,
-                 batch_size=64):
+                 batch_size=64, rnn_arch = 'rnn'):
         method.__init__(self, mName, mDescription)
         nn.Module.__init__(self)
-        self.rnn = nn.RNN(
-            input_size=emb_dim,
-            hidden_size=hidden_size,
-            num_layers=num_layers,
-            batch_first=True
-        )
+
+        if rnn_arch == 'rnn':
+            self.rnn = nn.RNN(
+                input_size=emb_dim,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                batch_first=True,
+                dropout= 0.2,   # prevent overfitting
+            )
+        elif rnn_arch == 'lstm':
+            self.rnn = nn.LSTM(
+                input_size=emb_dim,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                batch_first=True,
+                dropout= 0.2,   # prevent overfitting
+            )
+        elif rnn_arch == 'gru':
+            self.rnn = nn.GRU(
+                input_size=emb_dim,
+                hidden_size=hidden_size,
+                num_layers=num_layers,
+                batch_first=True,
+                dropout= 0.2,   # prevent overfitting
+            )
+            
         self.classifier = nn.Linear(hidden_size, 1)
 
         self.max_epoch  = max_epoch
         self.lr         = learning_rate
         self.batch_size = batch_size
         self.num_layers = num_layers
+        self.rnn_arch   = rnn_arch
         self.train_losses = []
 
     def forward(self, x):
@@ -43,7 +64,7 @@ class Method_TextRNN(method, nn.Module):
             pin_memory=True, persistent_workers=True, prefetch_factor=2
         )
 
-        optim   = torch.optim.Adam(self.parameters(), lr=self.lr)
+        optim   = torch.optim.Adam(self.parameters(), lr=self.lr, weight_decay=1e-4)  # L2 regularization
         loss_fn = nn.BCEWithLogitsLoss()
         #acc_eval = Evaluate_Accuracy('train-acc','')
 

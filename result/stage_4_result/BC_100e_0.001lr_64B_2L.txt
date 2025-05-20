@@ -1,0 +1,40 @@
+dataset: text_classification , method: TextRNN , setting: rnn_exp , result: saver , evaluation: accuracy
+loading data for text_classification...
+>> TextRNN training...
+[RNN] Epoch  0  Loss 0.7638  Acc 0.7119
+[RNN] Epoch  5  Loss 0.4465  Acc 0.8108
+[RNN] Epoch 10  Loss 0.3756  Acc 0.8494
+[RNN] Epoch 15  Loss 0.3246  Acc 0.8924
+[RNN] Epoch 20  Loss 0.2398  Acc 0.9200
+[RNN] Epoch 25  Loss 0.1615  Acc 0.9512
+[RNN] Epoch 30  Loss 0.1037  Acc 0.9743
+[RNN] Epoch 35  Loss 0.0883  Acc 0.9636
+[RNN] Epoch 40  Loss 0.1034  Acc 0.9782
+[RNN] Epoch 45  Loss 0.0738  Acc 0.9866
+[RNN] Epoch 50  Loss 0.0741  Acc 0.9471
+[RNN] Epoch 55  Loss 0.0842  Acc 0.9666
+[RNN] Epoch 60  Loss 0.1080  Acc 0.8680
+[RNN] Epoch 65  Loss 0.0899  Acc 0.9749
+[RNN] Epoch 70  Loss 0.0802  Acc 0.9788
+[RNN] Epoch 75  Loss 0.0385  Acc 0.9733
+[RNN] Epoch 80  Loss 0.0926  Acc 0.9717
+[RNN] Epoch 85  Loss 0.1514  Acc 0.9371
+[RNN] Epoch 90  Loss 0.1138  Acc 0.9648
+[RNN] Epoch 95  Loss 0.0832  Acc 0.9819
+>> TextRNN testing...
+evaluating accuracy...
+evaluating precision (macro)...
+evaluating recall (macro)...
+evaluating f1 score (macro)...
+evaluating precision (micro)...
+evaluating recall (micro)...
+evaluating f1 score (micro)...
+Saving plot to /Users/wuyongjiang/Desktop/ECS189G DL/proj/result/stage_4_result/...
+--- Metrics ---
+accuracy       : 0.7878
+precision_macro: 0.7923
+recall_macro   : 0.7878
+f1_macro       : 0.7870
+precision_micro: 0.7878
+recall_micro   : 0.7878
+f1_micro       : 0.7878

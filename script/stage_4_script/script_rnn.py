@@ -19,21 +19,25 @@ if __name__ == '__main__':
 
     # single experiment on text_classification
     data_obj   = Dataset_Loader('text_classification', 'Sentiment data')
-    method_obj = Method_TextRNN('TextRNN','Binary sentiment RNN',
-                                emb_dim=100, hidden_size=128, num_layers=2,
-                                max_epoch=100, learning_rate=1e-3,
-                                batch_size=64)
-    
-    result_obj = Result_Saver('saver','')
-    result_obj.result_destination_folder_path = proj_root + '/result/stage_4_result/'
-    result_obj.result_destination_file_name   = 'rnn_preds.pkl'
 
-    evaluate_obj = Evaluate_Accuracy('accuracy','')
+    archs = ['rnn', 'lstm', 'gru']
 
-    setting_obj = Setting('rnn_exp','RNN sentiment classification')
-    setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
-    setting_obj.print_setup_summary()
-    metrics = setting_obj.load_run_save_evaluate()
+    for arch in archs:
+        method_obj = Method_TextRNN('TextRNN','Binary sentiment RNN',
+                                    emb_dim=100, hidden_size=128, num_layers=2,
+                                    max_epoch=40, learning_rate=1e-3,
+                                    batch_size=128, rnn_arch = arch)
+        
+        result_obj = Result_Saver('saver','')
+        result_obj.result_destination_folder_path = proj_root + '/result/stage_4_result/'
+        result_obj.result_destination_file_name   = 'rnn_preds.pkl'
 
-    print('--- Metrics ---')
-    for k,v in metrics.items(): print(f'{k:15s}: {v:.4f}')
+        evaluate_obj = Evaluate_Accuracy('accuracy','')
+
+        setting_obj = Setting('rnn_exp','RNN sentiment classification')
+        setting_obj.prepare(data_obj, method_obj, result_obj, evaluate_obj)
+        setting_obj.print_setup_summary()
+        metrics = setting_obj.load_run_save_evaluate()
+
+        print('--- Metrics ---')
+        for k,v in metrics.items(): print(f'{k:15s}: {v:.4f}')

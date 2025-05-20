@@ -57,11 +57,23 @@ class Setting(setting):
         lr         = self.method.lr
         bs         = self.method.batch_size
         layers     = self.method.num_layers
-        fname = f"BC_{epochs}e_{lr}lr_{bs}B_{layers}L.png"
+        fprefix = f"RNN_BC_{epochs}e_{lr}lr_{bs}B_{layers}L"
+
+        # save plot
+        fname = fprefix + ".png"
         save_dir = self.result.result_destination_folder_path
         print(f"Saving plot to {save_dir}...")
         os.makedirs(save_dir, exist_ok=True)
         plt.savefig(os.path.join(save_dir, fname))
         plt.close()
+
+        # save metrics to txt file
+        txt_fname = fprefix + ".txt"
+        txt_path  = os.path.join(save_dir, txt_fname)
+        with open(txt_path, 'w') as f:
+            f.write("=== Metrics ===\n")
+            for name, val in metrics.items():
+                f.write(f"{name:15s}: {val:.4f}\n")
+        print(f"Saved metrics to {txt_path}")
 
         return metrics
