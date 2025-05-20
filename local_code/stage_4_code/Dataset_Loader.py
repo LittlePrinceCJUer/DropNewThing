@@ -11,7 +11,7 @@ class Dataset_Loader(dataset):
     Tokenizes, removes basic stopwords/punctuation, maps to GloVe embeddings,
     pads or truncates to fixed length.
     """
-    def __init__(self, dName=None, dDescription=None, max_len=100, emb_dim=100):
+    def __init__(self, dName=None, dDescription=None, max_len=300, emb_dim=100):
         super().__init__(dName, dDescription)
         self.max_len = max_len
         self.emb_dim = emb_dim
