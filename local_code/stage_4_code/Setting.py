@@ -57,7 +57,8 @@ class Setting(setting):
         lr         = self.method.lr
         bs         = self.method.batch_size
         layers     = self.method.num_layers
-        fprefix = f"RNN_BC_{epochs}e_{lr}lr_{bs}B_{layers}L"
+        arch       = self.method.rnn_arch
+        fprefix = f"{arch}_BC_{epochs}e_{lr}lr_{bs}B_{layers}L"
 
         # save plot
         fname = fprefix + ".png"
