@@ -19,3 +19,6 @@ __pycache__/
 
 # dataset
 /data/
+
+# pretrained models
+/.vector_cache/
