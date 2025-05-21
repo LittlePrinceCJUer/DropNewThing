@@ -48,8 +48,12 @@ class Method_TextRNN(method, nn.Module):
                 dropout= dro,   # prevent overfitting
             )
 
-        self.classifier = nn.Linear(hidden_size, 1)
+        is_bi = (rnn_arch == 'birnn')
+        fc_in = hidden_size * (2 if is_bi else 1)
+        self.classifier = nn.Linear(fc_in, 1)
 
+        self.hidden_size= hidden_size
+        self.is_bi      = is_bi
         self.max_epoch  = max_epoch
         self.lr         = learning_rate
         self.batch_size = batch_size
@@ -62,19 +66,28 @@ class Method_TextRNN(method, nn.Module):
     def forward(self, x):
         # x: [batch, seq_len, emb_dim]
         if self.arch_type == 1:
-            out, _ = self.rnn(x)                # out: [batch, seq_len, hidden]
-            h_sum = out.sum(dim=1)              # sum over time: [batch, hidden]
-            logits = self.classifier(h_sum)     # [batch, 1]
-            
-        elif self.arch_type == 2:
+            out, _ = self.rnn(x)         # [B, L, H*(2 if bi else 1)]
+            h_sum   = out.sum(dim=1)     # [B, H*(2 if bi else 1)]
+            logits  = self.classifier(h_sum)
+
+        else:  # arch_type 2: last‐hidden
             if self.rnn_arch == 'lstm':
-                out, (h_n, c_n) = self.rnn(x)           # h_n: [num_layers, batch, hidden]
-                last_hidden = h_n[-1]                   # [batch, hidden]
-                logits = self.classifier(last_hidden)
+                out, (h_n, c_n) = self.rnn(x)
             else:
-                out, h_n = self.rnn(x)                  # h_n: [num_layers, batch, hidden]
-                last_hidden = h_n[-1]                   # [batch, hidden] (take last layer)
-                logits = self.classifier(last_hidden)
+                out, h_n      = self.rnn(x)
+            # h_n: [num_layers*(2 if bi else 1), B, H]
+            if self.is_bi:
+                # reshape to [num_layers, 2, B, H]
+                bsz = x.size(0)
+                h_n = h_n.view(self.num_layers, 2, bsz, self.hidden_size)
+                # take last layer’s forward & backward
+                last_fwd = h_n[-1, 0]   # [B, H]
+                last_bwd = h_n[-1, 1]   # [B, H]
+                last_hidden = torch.cat([last_fwd, last_bwd], dim=1)  # [B, 2H]
+            else:
+                # simply take last layer
+                last_hidden = h_n[-1]   # [B, H]
+            logits = self.classifier(last_hidden)
 
         return logits.squeeze(1)            # [batch]
 
