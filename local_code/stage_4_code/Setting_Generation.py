@@ -55,14 +55,14 @@ class Setting_Generation(setting):
         limit = self.max_gen if self.max_gen is not None else len(self.dataset.raw_jokes)
         outputs = []
         for tokens in self.dataset.raw_jokes[:limit]:
-            prefix = tokens[:6]
+            prefix = tokens[:5]
             prefix_ids = [ self.dataset.stoi.get(tok, self.dataset.unk_idx)
                            for tok in prefix ]
             gen_ids = self.method.generate(prefix_ids, max_gen_len=200)
             gen_toks = [ self.dataset.itos[i] for i in gen_ids ]
             outputs.append(' '.join(prefix + gen_toks))
 
-        out_txt = os.path.join(gen_dir, f'{self.method.rnn_arch}_generated_jokes.txt')
+        out_txt = os.path.join(gen_dir, f'{self.method.rnn_arch}_generated_jokes_{self.method.max_epoch}e.txt')
         with open(out_txt, 'w', encoding='utf8') as f:
             for line in outputs:
                 f.write(line + "\n")

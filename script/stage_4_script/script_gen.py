@@ -35,6 +35,7 @@ if __name__=='__main__':
 
         # 2) model
         vocab_size = len(data_obj.itos)
+        epochs = 200
         method_obj = Method_TextGen_RNN(
             'TextGenRNN','joke generator',
             vocab_size=vocab_size,
@@ -42,7 +43,7 @@ if __name__=='__main__':
             hidden_size=128,
             num_layers=1,
             rnn_arch=arch,
-            max_epoch=200,
+            max_epoch=epochs,
             learning_rate=1e-3,
             batch_size=64,
             pad_idx=data_obj.pad_idx,
@@ -55,7 +56,7 @@ if __name__=='__main__':
         result_obj.result_destination_folder_path = os.path.join(
             PROJ_ROOT,'result','stage_4_result'
         )
-        result_obj.result_destination_file_name   = f"{arch}_gen_preds.pkl"
+        result_obj.result_destination_file_name   = f"{arch}_gen_{epochs}E_preds.pkl"
 
         # 4) dummy evaluator
         evaluate_obj = Evaluate_Accuracy('none','')
