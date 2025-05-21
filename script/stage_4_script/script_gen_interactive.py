@@ -10,7 +10,7 @@ from local_code.stage_4_code.Method_TextGen_RNN      import Method_TextGen_RNN
 
 if __name__ == '__main__':
     # ---- set your six start words here ----
-    prefix_words = ["what", "did", "the", "bartender", "say", "to"]
+    prefix_words = ["Hey","!","How", "are", "you", "bro"]
     # ----------------------------------------
 
     device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
