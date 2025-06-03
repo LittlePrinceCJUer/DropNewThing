@@ -1,0 +1,8 @@
+=== Metrics ===
+accuracy       : 0.5342
+precision_macro: 0.5603
+recall_macro   : 0.5342
+f1_macro       : 0.4777
+precision_micro: 0.5342
+recall_micro   : 0.5342
+f1_micro       : 0.5342

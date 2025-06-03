@@ -22,13 +22,13 @@ if __name__ == '__main__':
     # single experiment on text_classification
     data_obj   = Dataset_Loader('text_classification', 'Sentiment data', max_len=150, emb_dim=set_emb_dim)
 
-    archs = ['birnn','gru','rnn','lstm']    #
+    archs = ['rnn','lstm','birnn','gru']    #
 
     for arch in archs:
         method_obj = Method_TextRNN('TextRNN','Binary sentiment RNN',
                                     emb_dim=set_emb_dim, hidden_size=60, num_layers=1, dro = 0,
-                                    max_epoch=9, learning_rate=1e-3,
-                                    batch_size=50, rnn_arch = arch, arch_type = 2)
+                                    max_epoch=20, learning_rate=1e-3,
+                                    batch_size=512, rnn_arch = arch, arch_type = 1)
         
         result_obj = Result_Saver('saver','')
         result_obj.result_destination_folder_path = proj_root + '/result/stage_4_result/'

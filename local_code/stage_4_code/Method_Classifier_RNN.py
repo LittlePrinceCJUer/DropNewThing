@@ -121,7 +121,7 @@ class Method_TextRNN(method, nn.Module):
             epoch_loss = running_loss / len(X_train)
             self.train_losses.append(epoch_loss)
 
-            if epoch % 5 == 0:
+            if epoch % 2 == 0:
                 total, correct = 0, 0
                 with torch.no_grad():
                     for xb_cpu, yb_cpu in loader:
