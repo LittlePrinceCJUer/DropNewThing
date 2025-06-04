@@ -20,7 +20,7 @@ if __name__ == "__main__":
     torch.manual_seed(1)
 
     datasets = [("citeseer", 6)]   #("pubmed",3), , ("cora", 7)
-    base_hidden = [32, 3]   #1024, 512, 256, 128, 64, 32, 16
+    base_hidden = [16, 3]   #1024, 512, 256, 128, 64, 32, 16
 
     for name, num_cls in datasets:
         base_hidden[-1] = num_cls  # Set the last hidden dimension to num_classes
